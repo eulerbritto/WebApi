@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using WebApi.Authorization;
+using WebApi.Domain.Handlers.Users;
 using WebApi.Helpers;
 using WebApi.Interfaces;
 using WebApi.Models.Users;
@@ -14,33 +16,30 @@ namespace WebApi.Controllers;
 public class UsersController : ControllerBase
 {
     private IUserService _userService;
-    private IMapper _mapper;
     private readonly AppSettings _appSettings;
 
     public UsersController(
         IUserService userService,
-        IMapper mapper,
         IOptions<AppSettings> appSettings)
     {
         _userService = userService;
-        _mapper = mapper;
         _appSettings = appSettings.Value;
     }
 
     [AllowAnonymous]
     [HttpPost("authenticate")]
     public IActionResult Authenticate(AuthenticateRequest model)
-    {
+     {
         var response = _userService.Authenticate(model);
         return Ok(response);
     }
 
     [AllowAnonymous]
     [HttpPost("register")]
-    public IActionResult Register(RegisterRequest model)
+    public IActionResult Register([FromServices] IMediator mediator,
+                                  [FromBody] RegisterRequest command)
     {
-        _userService.Register(model);
-         return Created(new Uri("http://localhost:4000/register"), new { userName = model.Username });
+        return Ok(mediator.Send(command));
     }
 
     [HttpGet]
@@ -58,9 +57,12 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update(int id, UpdateRequest model)
+    public IActionResult Update([FromServices] IMediator mediator, 
+                                [FromQuery] int id, 
+                                [FromBody] UpdateRequest command)
     {
-        _userService.Update(id, model);
+        command.Id = id;
+        mediator.Send(command);
         return Ok(new { message = "User updated successfully" });
     }
 

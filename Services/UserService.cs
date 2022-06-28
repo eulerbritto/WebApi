@@ -46,7 +46,7 @@ public class UserService : IUserService
         return GetUser(id);
     }
 
-    public void Register(RegisterRequest model)
+    public User Register(RegisterRequest model)
     {
         if (_context.Users.Any(x => x.Username.Equals(model.Username)))
             throw new AppException($"Login {model.Username} já existente.");
@@ -57,13 +57,14 @@ public class UserService : IUserService
 
         _context.Users.Add(user);
         _context.SaveChanges();
+        return user;
     }
 
     public void Update(int id, UpdateRequest model)
     {
         var user = GetUser(id);
 
-        if (!model.Username.Equals(user.Username) && 
+        if (!model.Username.Equals(user.Username) &&
             _context.Users.Any(x => x.Username.Equals(model.Username)))
             throw new AppException("Login já está em uso.");
 
