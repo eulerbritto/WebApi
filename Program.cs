@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using WebApi.Authorization;
+using WebApi.Domain.Handlers.Users;
 using WebApi.Helpers;
 using WebApi.Interfaces;
 using WebApi.Services;
@@ -13,7 +16,10 @@ var builder = WebApplication.CreateBuilder(args);
     if (env.IsProduction())
         services.AddDbContext<DataContext>();
     else
+    {
         services.AddDbContext<DataContext, SqliteDataContext>();
+        //services.AddDbContext<DataContext, SqliteReadDataContext>();
+    }
 
     services.AddCors();
     services.AddControllers();
@@ -23,6 +29,7 @@ var builder = WebApplication.CreateBuilder(args);
     services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
     services.AddScoped<IJwt, JwtUtils>();
+    services.AddMediatR(Assembly.GetExecutingAssembly());
     services.AddScoped<IUserService, UserService>();
     services.AddScoped<ILeadService, LeadService>();
     services.AddSingleton<IMailService, MailService>();

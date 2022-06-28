@@ -1,8 +1,10 @@
 namespace WebApi.Models.Users;
 
+using MediatR;
 using System.ComponentModel.DataAnnotations;
+using WebApi.Domain.Commands.Requests;
 
-public class RegisterRequest
+public class RegisterRequest : IRequest<CreateUserResponse>
 {
     [Required]
     public string FirstName { get; set; }

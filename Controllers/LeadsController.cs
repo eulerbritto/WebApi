@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using WebApi.Authorization;
+using WebApi.Domain.Commands.Requests.Leads;
 using WebApi.Helpers;
 using WebApi.Interfaces;
 using WebApi.Models.Lead;
-using WebApi.Services;
 
 namespace WebApi.Controllers;
 [Authorize]
@@ -30,13 +31,13 @@ public class LeadsController : ControllerBase
         _appSettings = appSettings.Value;
     }
 
-
     [AllowAnonymous]
     [HttpPost("create")]
-    public IActionResult Create(LeadRequest model)
+    public IActionResult Create([FromServices] IMediator mediator,
+                                 [FromBody] CreateLeadRequest command)
     {
-        _leadService.Create(model);
-         return Ok();
+        var d = mediator.Send(command);
+        return Ok(new { message = "Lead created successfully" });
     }
 
     [AllowAnonymous]

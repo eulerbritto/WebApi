@@ -1,4 +1,6 @@
 using AutoMapper;
+using WebApi.Domain.Commands.Requests;
+using WebApi.Domain.Commands.Requests.Leads;
 using WebApi.Entities;
 using WebApi.Models.Lead;
 using WebApi.Models.Users;
@@ -13,6 +15,9 @@ public class AutoMapperProfile : Profile
 
         CreateMap<RegisterRequest, User>();
 
+        CreateMap<CreateUserResponse, User>();
+        CreateMap<User, CreateUserResponse>();
+
         CreateMap<Models.Users.UpdateRequest, User>()
             .ForAllMembers(x => x.Condition(
                 (src, dest, prop) =>
@@ -25,6 +30,9 @@ public class AutoMapperProfile : Profile
             ));
 
         CreateMap<LeadRequest, Lead>();
+        CreateMap<CreateLeadRequest, Lead>();
+        CreateMap<CreateLeadResponse, Lead>();
+        CreateMap<Lead, CreateLeadResponse>();
 
         CreateMap<Models.Lead.UpdateRequest, Lead>()
            .ForAllMembers(x => x.Condition(

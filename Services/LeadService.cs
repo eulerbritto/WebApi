@@ -1,4 +1,5 @@
 using AutoMapper;
+using WebApi.Domain.Commands.Requests.Leads;
 using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Interfaces;
@@ -37,7 +38,7 @@ public class LeadService : ILeadService
         return GetLead(id);
     }
 
-    public void Create(LeadRequest model)
+    public Lead Create(CreateLeadRequest model)
     {
         if (_context.Leads.Any(x => x.FirstName.ToLower().Equals(model.FirstName.ToLower()) &&
                                 x.DateCreated.Equals(model.DateCreated)))
@@ -47,6 +48,7 @@ public class LeadService : ILeadService
 
         _context.Leads.Add(lead);
         _context.SaveChanges();
+        return lead;
     }
 
     public void Update(int id, UpdateRequest model)
